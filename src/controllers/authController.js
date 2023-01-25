@@ -30,6 +30,7 @@ export async function cadastro (req, res){
         })
         res.status(200).send("Cadastro realizado com sucesso")
     } catch (error) {
-        
+        console.error(error)
+        res.status(500).send("Erro ao cadastrar usuário")
     }
 }
