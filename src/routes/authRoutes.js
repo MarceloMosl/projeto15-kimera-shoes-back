@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { login } from "../controllers/authController";
-import { cadastro } from "../controllers/authController";
-const router = Router ()
+import { login } from "../controllers/authController.js";
+import { cadastro } from "../controllers/authController.js";
+const router = Router();
 
-router.post("/login", login)
-router.post("/cadastro", cadastro)
+router.post("/login", login);
+router.post("/cadastro", cadastro);
 
-export default router
+export default router;
