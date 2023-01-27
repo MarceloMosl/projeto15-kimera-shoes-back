@@ -1,4 +1,3 @@
-import { rmSync } from "fs";
 import { ObjectId } from "mongodb";
 import db from "../config/dataBase.js";
 
@@ -46,6 +45,25 @@ export async function alterQuantitiesOnCart(req, res){
         res.send(200);
     } catch (error) {
         console.log(`alterQuantitiesOnCart Function Error: ${error}`);
+        res.sendStatus(500);
+    }
+}
+
+export async function deleteProductOnCart(req, res){
+    const {product_id} = req.body;
+    let auth = req.headers.authentication;
+    auth = auth.replace("Bearer", "");
+
+    if(!auth) return res.status(401).send("Usuário não encontrado");
+
+    try {
+        const {userId} = await db.collection("sessions").findOne({token: auth});
+        if (!userId) return res.status(404).send("Usuário não autorizado");
+
+        await db.collection("cart").deleteOne({userId, productId: ObjectId(product_id)});
+        res.sendStatus(202);
+    } catch (error) {
+        console.log(`deleteProductOnCart Function Error: ${error}`);
         res.sendStatus(500);
     }
 }
