@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import db from "../config/dataBase.js";
 
-export async function addProductonCart(req, res) {
+export async function addProductOnCart(req, res) {
     const {product_id, quant} = req.body;
     let auth = req.headers.authentication;
     auth = auth.replace("Bearer ", "");
@@ -15,12 +15,13 @@ export async function addProductonCart(req, res) {
         const product = await db.collection("products").findOne({_id: ObjectId(product_id)}, { quant: 1 });
         if(!product) return res.status(404).send("Produto não encontrado");
 
-        if (quant > product.quant) return res.status(409);
+        if (Number(quant) > Number(product.quant)) return res.sendStatus(409);
 
         await db.collection("cart").insertOne({userId: userId.userId, productId: product._id, quant});
         res.sendStatus(201);
     } catch (error) {
-        console.log(`getCart Function Error: ${error}`);
+        console.log(`addProductonCart Function Error: ${error}`);
         res.sendStatus(500);
     }
 }
+
