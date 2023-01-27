@@ -9,15 +9,18 @@ export async function addProductOnCart(req, res) {
     if (!auth) return res.status(401).send("Usuário não autorizado");
 
     try {
-        const userId = await db.collection("sessions").findOne({token: auth});
+        const {userId} = await db.collection("sessions").findOne({token: auth});
         if (!userId) return res.status(404).send("Usuário não autorizado");
-
+        
         const product = await db.collection("products").findOne({_id: ObjectId(product_id)}, { quant: 1 });
         if(!product) return res.status(404).send("Produto não encontrado");
 
+        const alreadyOnCart = await db.collection("cart").findOne({userId, productId: product._id});
+        if (alreadyOnCart) return res.status(409).send("Produto já está no carrinho");
+
         if (Number(quant) > Number(product.quant)) return res.sendStatus(409);
 
-        await db.collection("cart").insertOne({userId: userId.userId, productId: product._id, quant});
+        await db.collection("cart").insertOne({userId, productId: product._id, quant});
         res.sendStatus(201);
     } catch (error) {
         console.log(`addProductonCart Function Error: ${error}`);
