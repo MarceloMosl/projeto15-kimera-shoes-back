@@ -5,8 +5,11 @@ import {
     deleteProductOnCart,
     getProductsOnCart
 } from "../controllers/cartController.js";
+import { userMiddleware } from "../middleware/userMiddleware.js";
 
 const router = Router();
+
+router.use(userMiddleware);
 
 router.get("/carrinho", getProductsOnCart);
 router.post("/carrinho", addProductOnCart);
