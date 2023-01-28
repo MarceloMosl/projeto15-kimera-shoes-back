@@ -2,13 +2,9 @@ import { ObjectId } from "mongodb";
 import db from "../config/dataBase.js";
 
 export async function getProductsOnCart(req, res){
-    if (!req.headers.authentication) return res.status(401).send("Token inválido");
-    const auth = req.headers.authentication.replace("Bearer", "");
 
     try {
-        const {userId} = await db.collection("sessions").findOne({token: auth});
-        if (!userId) return res.status(404).send("Usuário não encontrado");
-
+        const userId = res.locals.user._id;
         const result = [];
 
         const productsOnCart = await db.collection("cart").find({userId}).toArray();
@@ -30,14 +26,9 @@ export async function getProductsOnCart(req, res){
 
 export async function addProductOnCart(req, res) {
     const {product_id, quant} = req.body;
-    let auth = req.headers.authentication;
-    auth = auth.replace("Bearer ", "");
-
-    if (!auth) return res.status(401).send("Usuário não autorizado");
 
     try {
-        const {userId} = await db.collection("sessions").findOne({token: auth});
-        if (!userId) return res.status(404).send("Usuário não autorizado");
+        const userId = res.locals.user._id;
         
         const product = await db.collection("products").findOne({_id: ObjectId(product_id)}, { quant: 1 });
         if(!product) return res.status(404).send("Produto não encontrado");
@@ -57,21 +48,16 @@ export async function addProductOnCart(req, res) {
 
 export async function alterQuantitiesOnCart(req, res){
     const {product_id, quant} = req.body;
-    let auth = req.headers.authentication;
-    auth = auth.replace("Bearer", "");
-
-    if (!auth) return res.status(401).send("Usuário não autorizado");
 
     try {
-        const userId = await db.collection("sessions").findOne({token: auth});
-        if (!userId) return res.status(404).send("Usuário não autorizado");
+        const userId = res.locals.user._id;
 
         const product = await db.collection("products").findOne({_id: ObjectId(product_id)}, { quant: 1 });
         if(!product) return res.status(404).send("Produto não encontrado 2");
 
         if (Number(quant) > Number(product.quant)) return res.sendStatus(409);
 
-        await db.collection("cart").updateOne({userId: userId.userId, productId: product._id}, {$set: {quant}});
+        await db.collection("cart").updateOne({userId, productId: product._id}, {$set: {quant}});
         res.send(200);
     } catch (error) {
         console.log(`alterQuantitiesOnCart Function Error: ${error}`);
@@ -81,13 +67,9 @@ export async function alterQuantitiesOnCart(req, res){
 
 export async function deleteProductOnCart(req, res){
     const {product_id} = req.body;
-    let auth = req.headers.authentication;
-    auth = auth.replace("Bearer", "");
-
-    if(!auth) return res.status(401).send("Usuário não encontrado");
 
     try {
-        const {userId} = await db.collection("sessions").findOne({token: auth});
+        const userId = res.locals.user._id;
         if (!userId) return res.status(404).send("Usuário não autorizado");
 
         await db.collection("cart").deleteOne({userId, productId: ObjectId(product_id)});
