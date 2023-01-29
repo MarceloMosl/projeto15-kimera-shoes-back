@@ -11,9 +11,9 @@ const router = Router();
 
 // router.use(userMiddleware);
 
-router.get("/carrinho", getProductsOnCart);
-router.post("/carrinho", addProductOnCart);
-router.put("/carrinho", alterQuantitiesOnCart);
-router.delete("/carrinho", deleteProductOnCart);
+router.get("/carrinho", userMiddleware, getProductsOnCart);
+router.post("/carrinho", userMiddleware, addProductOnCart);
+router.put("/carrinho", userMiddleware, alterQuantitiesOnCart);
+router.delete("/carrinho", userMiddleware, deleteProductOnCart);
 
 export default router;
