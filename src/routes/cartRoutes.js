@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { 
-    addProductOnCart,
-    alterQuantitiesOnCart,
-    deleteProductOnCart,
-    getProductsOnCart
+import {
+  addProductOnCart,
+  alterQuantitiesOnCart,
+  deleteProductOnCart,
+  getProductsOnCart,
 } from "../controllers/cartController.js";
 import { userMiddleware } from "../middleware/userMiddleware.js";
 
 const router = Router();
 
-router.use(userMiddleware);
+// router.use(userMiddleware);
 
 router.get("/carrinho", getProductsOnCart);
 router.post("/carrinho", addProductOnCart);
