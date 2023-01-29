@@ -13,6 +13,7 @@ export async function getProductsOnCart(req, res){
             const productData = await db.collection("products").findOne({_id: product.productId});
             result.push({
                 productId: (productData._id).toString(),
+                title: productData.title,
                 quant: product.quant,
                 size: product.size,
                 image: productData.img,
