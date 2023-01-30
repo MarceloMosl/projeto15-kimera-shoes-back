@@ -4,10 +4,10 @@ import db from "../config/dataBase.js";
 
 export async function postRegisterSale(req, res) {
     try {
-        const productsOnCart = req.body;
+        const {products, totalPrice} = req.body;
         const userId = res.locals.user._id;
         
-        for (const product of productsOnCart) {
+        for (const product of products) {
             const remove = Number(product.quant) * -1;
             await db.collection("products").updateOne({_id: ObjectId(product.productId)}, {$inc: {quant: remove}});
         }
@@ -16,8 +16,9 @@ export async function postRegisterSale(req, res) {
 
         await db.collection("sales").insertOne({
             userId,
-            products: value,
-        })
+            products,
+            totalPrice,
+        });
         
         res.sendStatus(201);
     } catch (err) {
