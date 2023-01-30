@@ -28,12 +28,12 @@ export async function login(req, res) {
       const token = uuid();
       await db
         .collection("sessions")
-        .insertOne({ token, userID: verificaUser._id });
+        .insertOne({ token, userId: checkUser._id });
       return res.status(200).send({ token, name: checkUser.name });
     }
     res.status(200).send("Login realizado com sucesso");
   } catch (error) {
-    console.error("Erro ao cadastrar usuário");
+    console.error("Erro ao logar usuário");
     res.status(500).send(error);
   }
 }
@@ -50,7 +50,7 @@ export async function cadastro(req, res) {
 
     await db.collection("users").insertOne({
       name: newUser.name,
-      lasname: newUser.lastName,
+      lastname: newUser.lastName,
       email: newUser.email,
       password: passwordHash,
       street: newUser.street,
